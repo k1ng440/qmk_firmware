@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "action.h"
 #include "action_layer.h"
 #include "bitwise.h"
 #include "keycodes.h"
@@ -61,7 +62,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * |-------+------+------+------+------+-------------+------+------+------+------+------+------+------+-------+--------+-------|
      * | SFT   |  Z   |  X   |  C   |  V   |  B   |  N   |  M   |  M   |  ,<  |  .>  |  /?  |      | SFT |        |   UP   |       |
      * |-------+------+------+------+------+-------------+------+------+------+------+------+------+------+-------+--------+-------|
-     * | CRTRL | WIN  | ALT  |             | SPC  |                    | ALT  |  WIN | FN   | CTRL |      |   L   |  DOWN  |  R    |
+     * | CRTRL | WIN  | ALT  |                SPC                      | ALT  |  WIN | FN   | CTRL |      |   L   |  DOWN  |  R    |
      * `---------------------------------------------------------------------------------------------------------------------------'
      */
     [WIN_BASE] = LAYOUT_tkl_f13_ansi(
@@ -84,7 +85,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     /*
      * ,---------------------------------------------------------------------------------------------------------------------------.
-     * | ESC   |      |      |      |      |      |      |      |      |      |      |      |      |      |       |        |       |
+     * | ESC   |      |      |      |      |      |      |      |      |      |      |      |      |      |       |  TG    |       |
      * |-------+------+------+------+------+-------------+------+------+------+------+------+------+------+-------+--------+-------|
      * |       |  1   |  2   |  3   |  4   |  5   |  6   |  7   |  8   |  9   |  0   |  -   |  +   | BSPC |       |        |       |
      * |-------+------+------+------+------+-------------+------+------+------+------+------+------+------+-------+--------+-------|
@@ -98,33 +99,40 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * `---------------------------------------------------------------------------------------------------------------------------'
      */
     [NUMPAD] = LAYOUT_tkl_f13_ansi(
-        TG(NUMPAD),   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,     _______,  _______,  _______,  TG(NUMPAD),  _______,
-        _______,         KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,      KC_0,  KC_MINS,      KC_EQL,  KC_BSPC,  _______,     _______,  _______,
-        _______,      _______,  _______,  _______,  _______,  _______,  _______,     KC_4,     KC_5,     KC_6,   KC_PSLS,  _______,     _______,  KC_PSLS,  _______,     _______,  _______,
-        _______,      _______,  _______,  _______,  _______,  _______,  _______,     KC_1,     KC_2,     KC_3,   KC_PAST,  _______,               KC_ENT,
-        _______,                _______,  _______,  _______,  _______,  _______,   KC_DOT,     KC_0,  KC_PPLS,   KC_PMNS,  _______,               _______,               _______,
+        TG(NUMPAD),   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,     _______,  _______,  TG(NUMPAD),  _______,
+        _______,      KC_KP_1,  KC_KP_2,  KC_KP_3,  KC_KP_4,  KC_KP_5,  KC_KP_6,  KC_KP_7,  KC_KP_8,  KC_KP_9,   KC_KP_0,  KC_MINS,   KC_EQL,     KC_BSPC,  _______,     _______,  _______,
+        _______,      _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_4,  KC_KP_5,  KC_KP_6,   KC_PSLS,  _______,  _______,     KC_PSLS,  _______,     _______,  _______,
+        _______,      _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_1,  KC_KP_2,  KC_KP_3,   KC_PAST,  _______,                KC_ENT,
+        _______,                _______,  _______,  _______,  _______,  _______,   KC_DOT,  KC_KP_0,  KC_PPLS,   KC_PMNS,  _______,               _______,               _______,
         _______,      _______,  _______,                                _______,                                  KC_ENT,  _______,  TG(NUMPAD),  _______,  _______,     _______,  _______
-
-        // TODO: Figure out why KC_KP does not work
-        // TG(NUMPAD),   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,    _______,     _______,  TG(NUMPAD),  _______,
-        // _______,      KC_KP_1,  KC_KP_2,  KC_KP_3,  KC_KP_4,  KC_KP_5,  KC_KP_6,  KC_KP_7,  KC_KP_8,  KC_KP_9,   KC_KP_0,  KC_MINS,  KC_EQL,  KC_BSPC,  _______,  _______,  _______,
-        // _______,      _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_4,  KC_KP_5,  KC_KP_6,   KC_PSLS,  _______,   _______,    KC_BSLS,     _______,  _______,  _______,
-        // _______,      _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_1,  KC_KP_2,  KC_KP_3,   KC_PAST,  _______,                 KC_ENT,
-        // _______,                _______,  _______,  _______,  _______,  _______,  KC_DOT,   KC_KP_0,  KC_PPLS,   KC_PMNS,  _______,                 _______,               _______,
-        // _______,      _______,  _______,                                _______,                                 KC_ENT,   _______,     TG(NUMPAD), _______,     _______,  _______,  _______
     ),
 };
 
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    led_t led_state = host_keyboard_led_state();
+    switch(get_highest_layer(state)) {
+        case NUMPAD:
+            if (!led_state.num_lock) {
+                tap_code(KC_NUM);
+            }
+            break;
+    }
+
+    return state;
+}
+
 // https://www.reddit.com/r/olkb/comments/kpro3p/how_to_use_layer_indicators_with_rgb_matrix_for/
 #define NUMPAD_INDICATOR_COLOR(keyIndex) rgb_matrix_set_color(keyIndex, 0, 0, 255) // blue
+
 bool rgb_matrix_indicators_user(void) {
     uint8_t layer = biton32(layer_state);
     switch (layer) {
-        case NUMPAD: // numpad layer
+        case NUMPAD:
             NUMPAD_INDICATOR_COLOR(0); // key = ESC
             NUMPAD_INDICATOR_COLOR(14); // key = scroll lock
 
-            // NUMROW
+            // Numrow
             for(int i = 16; i <= 29; ++i) {
                 NUMPAD_INDICATOR_COLOR(i);
             }
